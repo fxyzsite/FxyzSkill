@@ -74,13 +74,6 @@
 http://api.fxyz.site/wolf/list?flag=0&token=YOUR_TOKEN
 ```
 
-### 权限等级
-
-不同接口需要不同的权限等级（apiAuth字段）：
-- **Level 1**: 基础权限
-- **Level 2**: 高级权限
-- **Level 3**: 专业权限（包年版）
-
 ---
 
 ## 接口分类

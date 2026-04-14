@@ -244,9 +244,6 @@ if len(data) >= 2:
 | 分价数据 | `MarketApi.getPriceData()` |  分价统计 |
 | 资金流向 | `MarketApi.getMoneyFlow()` |  资金分析 |
 
-**权限说明**:
-- L1/L2/L3: Level 1/2/3 权限均可访问
-- L3: 仅Level 3（包年版）可访问
 
 ---
 
