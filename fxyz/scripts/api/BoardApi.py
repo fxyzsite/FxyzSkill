@@ -26,7 +26,7 @@ class BoardApi:
         params = {"symbol": symbol, "code": code, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"实时行情接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {}}")
+        DataUtil.printLog("/wolf/time", params, data)
         return data
 
     @staticmethod
@@ -43,7 +43,7 @@ class BoardApi:
         params = {"tradeDate": tradeDate, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"涨停板接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {}}")
+        DataUtil.printLog("/wolf/zt", params, data)
         return data
 
     @staticmethod
@@ -60,7 +60,7 @@ class BoardApi:
         params = {"tradeDate": tradeDate, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"跌停板接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {}}")
+        DataUtil.printLog("/wolf/dt", params, data)
         return data
 
     @staticmethod
@@ -77,7 +77,7 @@ class BoardApi:
         params = {"tradeDate": tradeDate, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"炸板接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {}}")
+        DataUtil.printLog("/wolf/zb", params, data)
         return data
 
     @staticmethod
@@ -94,7 +94,7 @@ class BoardApi:
         params = {"tradeDate": tradeDate, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"强势股接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {}}")
+        DataUtil.printLog("/wolf/qs", params, data)
         return data
 
     @staticmethod
@@ -110,5 +110,5 @@ class BoardApi:
         params = {"token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"次新股接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {}}")
+        DataUtil.printLog("/wolf/cx", params, data)
         return data

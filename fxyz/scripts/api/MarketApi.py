@@ -38,7 +38,7 @@ class MarketApi:
         }
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"实时K线接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {} }")
+        DataUtil.printLog("/wolf/time/kline", params, data)
         return data
 
     @staticmethod
@@ -56,7 +56,7 @@ class MarketApi:
         params = {"symbol": symbol, "code": code, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"日线快照接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {} }")
+        DataUtil.printLog("/wolf/time/day", params, data)
         return data
 
     @staticmethod
@@ -74,7 +74,7 @@ class MarketApi:
         params = {"symbol": symbol, "code": code, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"买卖五档接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {} }")
+        DataUtil.printLog("/wolf/time/five", params, data)
         return data
 
     @staticmethod
@@ -91,7 +91,7 @@ class MarketApi:
         params = {"code": code, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"竞价数据接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {} }")
+        DataUtil.printLog("/wolf/time/bid", params, data)
         return data
 
     @staticmethod
@@ -109,7 +109,7 @@ class MarketApi:
         params = {"code": code, "tradeDate": tradeDate, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"逐笔交易接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {} }")
+        DataUtil.printLog("/wolf/deal", params, data)
         return data
 
     @staticmethod
@@ -127,7 +127,7 @@ class MarketApi:
         params = {"code": code, "tradeDate": tradeDate, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"分价数据接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {} }")
+        DataUtil.printLog("/wolf/price", params, data)
         return data
 
     @staticmethod
@@ -146,5 +146,5 @@ class MarketApi:
         params = {"code": code, "tradeDate": tradeDate, "token": token}
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
-        print(f"资金流向接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {} }")
+        DataUtil.printLog("/wolf/money", params, data)
         return data

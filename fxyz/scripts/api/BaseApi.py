@@ -18,5 +18,5 @@ def getStockList(flag: int, token: str, method: str = "get") -> str:
     params = {"flag": flag, "token": token}
     result = DataUtil.request(url, method, params)
     data = json.loads(result)
-    print(f"股票列表接口，返回 {len(data)} 条记录，参数{params}，数据样例：{data[0] if len(data) > 0 else {}}")
+    DataUtil.printLog("/wolf/list", params, data)
     return data

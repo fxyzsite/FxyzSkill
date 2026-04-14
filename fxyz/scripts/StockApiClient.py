@@ -17,7 +17,7 @@ class StockApiClient(object):
 
             # ========== Board Api 测试 ==========
             # 1. 实时行情
-            data = BoardApi.getRealTimeQuote(symbol="stock", code="000001", token=token)
+            data = BoardApi.getRealTimeQuote(symbol="stock", code="000002", token=token)
 
             # 2. 涨停板
             data = BoardApi.getZhangTingBan(tradeDate="2026-04-13", token=token)
@@ -38,7 +38,7 @@ class StockApiClient(object):
             # 1. 实时K线
             data = MarketApi.getKLine(
                 symbol="stock",
-                code="000001",
+                code="000002",
                 period="1d",
                 cq="1",
                 startDate="2026-04-01",
@@ -47,22 +47,22 @@ class StockApiClient(object):
             )
 
             # 2. 日线快照
-            data = MarketApi.getDaySnapshot(symbol="stock", code="000001", token=token)
+            data = MarketApi.getDaySnapshot(symbol="stock", code="000002", token=token)
 
             # 3. 买卖五档
-            data = MarketApi.getFiveLevel(symbol="stock", code="000001", token=token)
+            data = MarketApi.getFiveLevel(symbol="stock", code="000002", token=token)
 
             # 4. 竞价数据
-            data = MarketApi.getBidData(code="000001", token=token)
+            data = MarketApi.getBidData(code="000002", token=token)
 
             # 5. 逐笔交易
-            data = MarketApi.getDealData(code="000001", tradeDate="2026-04-13", token=token)
+            data = MarketApi.getDealData(code="000002", tradeDate="2026-04-13", token=token)
 
             # 6. 分价数据
-            data = MarketApi.getPriceData(code="000001", tradeDate="2026-04-13", token=token)
+            data = MarketApi.getPriceData(code="000002", tradeDate="2026-04-13", token=token)
 
             # 7. 资金流向
-            data = MarketApi.getMoneyFlow(code="000001", tradeDate="2026-04-13", token=token)
+            data = MarketApi.getMoneyFlow(code="000002", tradeDate="2026-04-13", token=token)
 
         except Exception as e:
             print(f"调用失败: {e}")
