@@ -1,145 +1,94 @@
 ---
 name: fxyz
-description: 黑狼数据API提供全面、准确、稳定的股票实时行情数据，包括沪深京A股、ETF基金、指数等行情数据，以及涨停板、跌停板、炸板、强势股等特色数据，帮助开发者和研究者构建创新的交易和分析工具。
+description: Query the Fxyz stock market data API for Chinese A-share, ETF, index, and convertible-bond lists and market data, including quotes, K-lines, order books, limit-up/down boards, sector constituents, financial metrics, adjustment events, and money flow. Use when a task requires retrieving Fxyz data through its authenticated HTTP API.
 ---
 
-# 黑狼数据 (FXYZ)
+# Fxyz 市场数据 API Skill
 
-## 概述
+Fxyz（黑狼数据）提供中国股票市场实时数据 API。`fxyz` 是已发布到 PyPI 的 SDK 发行包名，也是 Python 导入包名。使用本 Skill 时，根据用户的数据需求选取对应接口，核对必填参数、标的类型和账号权限，再通过 SDK 或 HTTP API 获取数据。接口定义以 [`references/apidoc.md`](references/apidoc.md) 为准；该文档根据服务端 `apidoc.json` 同步。
 
-黑狼数据（http://www.fxyz.size）是一个专业的股票实时数据API服务平台，提供：
-- **基础数据**：全市场股票列表、交易日历
-- **实时行情**：30+行情指标，沪深京A股、ETF基金实时数据
-- **特色数据**：涨停板、跌停板、炸板、强势股、次新股实时监控
-- **K线数据**：8种周期（5分钟至年线），支持复权处理
-- **盘口数据**：买卖五档、竞价数据、逐笔交易、分价统计
-- **资金分析**：特大单、大单、中单、小单资金流向
+## 服务与认证
 
-## 快速上手
+- API 基础地址：`http://api.fxyz.site`
+- 官网：[https://www.fxyz.site/](https://www.fxyz.site/)
+- PyPI 安装包和 Python 导入包：`fxyz`
+- PyPI 项目页：[pypi.org/project/fxyz](https://pypi.org/project/fxyz/)
+- PyPI 安装命令：`python -m pip install fxyz`
+- 接口认证：所有当前文档中的接口都要求 `token` 参数。Token 由用户在 Fxyz 网站获取，必须从安全配置读取，不要写入代码、日志或回复内容。
+- HTTP 接口默认使用 GET，并将接口参数作为 URL 查询参数传递。项目客户端也支持通过 `method="post"` 发起 POST 查询参数请求。
 
-### 1. 环境准备
+## 能力范围
 
-- 安装Python运行环境（推荐Python 3.7+）
-- 安装依赖包：`requests`
+当前接口文档共包含 17 个接口：
+
+| 类别 | 能力 |
+|---|---|
+| 基础数据 | 股票列表（含沪深可转债）、行业/概念/特色板块成分股、财务核心指标 |
+| 涨停板数据 | 涨停板、跌停板、炸板、强势股、次新股 |
+| 实时行情数据 | 实时行情、K 线、日线快照、买卖五档、竞价、逐笔交易、分价、资金流向、复权变更 |
+
+K 线周期包括 `1m`、`5m`、`15m`、`30m`、`1h`、`1d`、`1w`、`1mon`、`1y`。数据类型根据接口支持股票、ETF、指数和沪深可转债；具体可选值及限制见接口文档。
+
+## 按用户意图选择接口
+
+| 用户需要 | 推荐 SDK 方法 |
+|---|---|
+| 股票、ETF、指数或可转债代码列表 | `BaseApi.getStockList(flag, token)` |
+| 行业、概念或特色板块的成分股 | `BaseApi.getSector(symbol, token)` |
+| 单只股票的财务核心指标 | `BaseApi.getFinanceMetric(code, startDate, endDate, token)` |
+| 单个标的实时行情 | `BoardApi.getRealTimeQuote(symbol, code, token)` |
+| K 线、日线快照或买卖五档 | `MarketApi.getKLine(...)`、`getDaySnapshot(...)`、`getFiveLevel(...)` |
+| 涨停、跌停、炸板、强势股或次新股 | `BoardApi.getZhangTingBan(...)`、`getDieTingBan(...)`、`getZhaBan(...)`、`getQiangShiGu(...)`、`getCiXinGu(...)` |
+| 竞价、逐笔、分价、资金流向或复权变更 | `MarketApi.getBidData(...)`、`getDealData(...)`、`getPriceData(...)`、`getMoneyFlow(...)`、`getAdjustment(...)` |
+
+此表用于快速路由；参数详情和返回字段以 API 接口文档中的对应路径为准。
+
+## Python SDK 使用
+
+从 PyPI 安装 SDK：
 
 ```bash
-pip install requests
+python -m pip install fxyz
 ```
 
-### 2. 获取Token
-
-- 访问黑狼数据官网注册账号：http://www.fxyz.size
-- 登录后在个人中心获取API Token
-- Token激活参考：http://www.fxyz.site/#apply
-
-### 3. 配置Token
-
-在 `scripts/Config.py` 中配置您的token：
+示例：
 
 ```python
-class Config:
-    SERVER_URL = "http://api.fxyz.site"  # Api调用服务地址
-    TOKEN = "your_token_here"  # 替换为您的token
-```
+import os
 
-### 4. 使用API
-
-根据接口文档，使用Python代码获取数据：
-
-```python
-from fxyz.scripts.api.BoardApi import BoardApi
+from fxyz.scripts.api import BaseApi
 from fxyz.scripts.api.MarketApi import MarketApi
-from fxyz.scripts.Config import Config
 
-# 获取实时行情
-result = BoardApi.getRealTimeQuote(
-    symbol="stock",
+token = os.environ["FXYZ_TOKEN"]
+
+# 获取股票、ETF、指数等列表；flag=10 表示沪深可转债
+stocks = BaseApi.getStockList(flag=0, token=token)
+
+# 获取财务核心指标（仅支持单只股票）
+metrics = BaseApi.getFinanceMetric(
     code="000001",
-    token=Config.TOKEN
+    startDate="2026-01-01",
+    endDate="2026-03-31",
+    token=token,
 )
 
-# 获取K线数据
-result = MarketApi.getKLine(
-    symbol="stock",
-    code="000001",
-    period="1d",
+# 获取沪深可转债的 1 分钟 K 线
+bars = MarketApi.getKLine(
+    symbol="bond",
+    code="110000",
+    period="1m",
     cq="1",
-    startDate="2026-04-01",
-    endDate="2026-04-14",
-    token=Config.TOKEN
+    startDate="2026-03-01",
+    endDate="2026-03-31",
+    token=token,
 )
 ```
 
-## API模块说明
+SDK 方法返回 JSON 解码后的 Python 对象。传入 `code="all"` 的范围、周期和账号权限因接口不同而异，调用前请查阅完整接口文档。
 
-### Basic Api - 基础接口
+## 安全与数据使用
 
-- **股票列表** (`BaseApi.getStockList`): 获取各类股票列表（沪深京A股、ETF、指数等）
-
-### Board Api - 涨跌板接口
-
-- **实时行情** (`BoardApi.getRealTimeQuote`): 获取30+行情指标的实时数据
-- **涨停板** (`BoardApi.getZhangTingBan`): 获取涨停板实时监控数据
-- **跌停板** (`BoardApi.getDieTingBan`): 获取跌停板实时监控数据
-- **炸板** (`BoardApi.getZhaBan`): 获取炸板实时监控数据
-- **强势股** (`BoardApi.getQiangShiGu`): 获取强势股筛选数据
-- **次新股** (`BoardApi.getCiXinGu`): 获取次新股交易数据
-
-### Market Api - 行情接口
-
-- **实时K线** (`MarketApi.getKLine`): 获取8种周期的K线数据，支持复权
-- **日线快照** (`MarketApi.getDaySnapshot`): 获取日线级别快照数据
-- **买卖五档** (`MarketApi.getFiveLevel`): 获取实时买卖五档盘口数据
-- **竞价数据** (`MarketApi.getBidData`): 获取集合竞价数据（09:15-09:25）
-- **逐笔交易** (`MarketApi.getDealData`): 获取逐笔成交明细数据
-- **分价数据** (`MarketApi.getPriceData`): 获取分价位成交量统计
-- **资金流向** (`MarketApi.getMoneyFlow`): 获取主力资金流向分析
-
-## Python脚本示例
-
-- [完整API调用示例](scripts/StockApiClient.py) - 包含所有14个接口的测试代码
-- [涨跌板接口API](scripts/api/BoardApi.py) - Board Api模块实现
-- [行情接口API](scripts/api/MarketApi.py) - Market Api模块实现
-- [基础接口API](scripts/api/BaseApi.py) - Basic Api模块实现
-
-## 详细文档说明列表
-
-| ID | 文档名称 | 描述 |
-|----:|:---------|:-----|
-| 1 | [黑狼数据API接口文档](references/apidoc.md) | 完整的API接口文档，包含14个接口的详细说明、请求参数、返回参数、使用示例和注意事项。涵盖Basic Api、Board Api、Market Api三大模块。 |
-
-## 日志规范
-
-所有API调用都会自动打印格式化的日志信息，包括：
-- ✅ 请求参数
-- ✅ 返回数据的记录数
-- ✅ 返回数据的第一条数据（JSON格式）
-
-示例输出：
-```
-============================================================
-[BoardApi.getRealTimeQuote] API调用成功
-  请求参数:
-    - symbol: stock
-    - code: 000001
-  返回数据:
-    - 记录数: 1
-    - 第一条数据: {
-        "code": "000001",
-        "name": "平安银行",
-        "zxj": 11.07,
-        ...
-      }
-============================================================
-```
-
-## 注意事项
-
-1. **Token安全**: 请妥善保管您的Token，不要泄露给他人或提交到公开代码仓库
-2. **请求频率**: 请控制API调用频率，避免短时间内大量请求导致IP被封
-3. **数据更新**: 
-   - 实时数据：交易时间段内每分钟更新（9:30-11:30, 13:00-15:00）
-   - 历史数据：收盘后15:30或18:00更新
-4. **权限要求**:
-   - 全市场数据（`code=all`）需要包年版权限
-5. **错误处理**: 建议实现完善的异常处理和重试机制
+- 不要提交真实 Token。`fxyz/scripts/Config.py` 中的默认 Token 为空。
+- 接口权限和全市场查询能力由服务端账号配置决定；不要假定所有 Token 都能访问全部数据。
+- 按 API 服务条款和调用限制使用数据，并处理网络错误、权限错误和空结果。
+- 行情数据是 API 返回的数据，不构成投资建议。

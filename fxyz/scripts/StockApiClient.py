@@ -15,6 +15,17 @@ class StockApiClient(object):
             # 1. 股票列表
             data = BaseApi.getStockList(flag=0, token=token)
 
+            # 2. 概念成分股
+            data = BaseApi.getSector(symbol="gn", token=token)
+
+            # 3. 财务核心指标（单只股票）
+            data = BaseApi.getFinanceMetric(
+                code="000001",
+                startDate="2026-01-01",
+                endDate="2026-04-13",
+                token=token,
+            )
+
             # ========== Board Api 测试 ==========
             # 1. 实时行情
             data = BoardApi.getRealTimeQuote(symbol="stock", code="000002", token=token)
@@ -63,6 +74,11 @@ class StockApiClient(object):
 
             # 7. 资金流向
             data = MarketApi.getMoneyFlow(code="000002", tradeDate="2026-04-13", token=token)
+
+            # 8. 复权变更数据
+            data = MarketApi.getAdjustment(
+                symbol="stock", tradeDate="2026-04-13", token=token
+            )
 
         except Exception as e:
             print(f"调用失败: {e}")

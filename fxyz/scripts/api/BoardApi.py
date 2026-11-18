@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from fxyz.scripts.Config import Config
 from fxyz.scripts.util import DataUtil
@@ -11,7 +12,7 @@ class BoardApi:
     """
 
     @staticmethod
-    def getRealTimeQuote(symbol: str, code: str, token: str, method: str = "get") -> str:
+    def getRealTimeQuote(symbol: str, code: str, token: str, method: str = "get") -> Any:
         """
         获取沪深A股实时行情数据。
         提供涨速、涨跌幅、换手率、振幅、量比、内盘、外盘、ROE等行情指标数据。
@@ -30,7 +31,7 @@ class BoardApi:
         return data
 
     @staticmethod
-    def getZhangTingBan(tradeDate: str, token: str, method: str = "get") -> str:
+    def getZhangTingBan(tradeDate: str, token: str, method: str = "get") -> Any:
         """
         获取盘中涨停板实时数据。
         
@@ -47,7 +48,7 @@ class BoardApi:
         return data
 
     @staticmethod
-    def getDieTingBan(tradeDate: str, token: str, method: str = "get") -> str:
+    def getDieTingBan(tradeDate: str, token: str, method: str = "get") -> Any:
         """
         获取盘中跌停板实时数据。
 
@@ -64,7 +65,7 @@ class BoardApi:
         return data
 
     @staticmethod
-    def getZhaBan(tradeDate: str, token: str, method: str = "get") -> str:
+    def getZhaBan(tradeDate: str, token: str, method: str = "get") -> Any:
         """
         获取盘中炸板实时数据。
 
@@ -81,7 +82,7 @@ class BoardApi:
         return data
 
     @staticmethod
-    def getQiangShiGu(tradeDate: str, token: str, method: str = "get") -> str:
+    def getQiangShiGu(tradeDate: str, token: str, method: str = "get") -> Any:
         """
         获取盘中强势股票实时数据。
 
@@ -98,7 +99,7 @@ class BoardApi:
         return data
 
     @staticmethod
-    def getCiXinGu(token: str, method: str = "get") -> str:
+    def getCiXinGu(token: str, method: str = "get") -> Any:
         """
         获取次新股数据。
 

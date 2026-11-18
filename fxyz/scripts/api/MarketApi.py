@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 from fxyz.scripts.Config import Config
 from fxyz.scripts.util import DataUtil
@@ -12,13 +13,13 @@ class MarketApi:
 
     @staticmethod
     def getKLine(symbol: str, code: str, period: str, cq: str, startDate: str, endDate: str,
-                 token: str, method: str = "get") -> str:
+                 token: str, method: str = "get") -> Any:
         """
         获取沪深A股和ETF实时K线数据。
         
-        :param symbol: 股票类型，stock-沪深京A股，etf-ETF基金，index-指数
-        :param code: 股票代码，具体代码表示单个股票，all表示全推全市场数据（包年版）
-        :param period: K线周期，5m/15m/30m/1h/1d/1w/1mon/1y
+        :param symbol: 股票类型，stock-沪深京A股，etf-ETF基金，bond-沪深可转债，index-指数
+        :param code: 股票代码。包年版可使用all获取盘后全市场数据，仅限最近一周内的日线数据
+        :param period: K线周期，1m/5m/15m/30m/1h/1d/1w/1mon/1y
         :param cq: 复权类型，1-不复权，2-前复权，3-后复权
         :param startDate: 开始日期，格式：YYYY-MM-DD
         :param endDate: 结束日期，格式：YYYY-MM-DD
@@ -42,11 +43,11 @@ class MarketApi:
         return data
 
     @staticmethod
-    def getDaySnapshot(symbol: str, code: str, token: str, method: str = "get") -> str:
+    def getDaySnapshot(symbol: str, code: str, token: str, method: str = "get") -> Any:
         """
-        获取沪深A股和ETF实时日线行情数据。
+        获取沪深京A股、ETF、可转债和指数日线行情数据。
         
-        :param symbol: 股票类型，stock-沪深京A股，etf-ETF基金
+        :param symbol: 股票类型，stock-沪深京A股，etf-ETF基金，bond-沪深可转债，index-指数
         :param code: 股票代码，all表示全推全市场数据，具体代码表示单个股票
         :param token: 激活Token参考 http://www.fxyz.site/#apply
         :param method: 请求方法，默认get
@@ -60,11 +61,11 @@ class MarketApi:
         return data
 
     @staticmethod
-    def getFiveLevel(symbol: str, code: str, token: str, method: str = "get") -> str:
+    def getFiveLevel(symbol: str, code: str, token: str, method: str = "get") -> Any:
         """
         获取买卖五档实时数据。
         
-        :param symbol: 股票类型，stock-沪深京A股，etf-ETF基金
+        :param symbol: 股票类型，stock-沪深京A股，etf-ETF基金，bond-沪深可转债，index-指数
         :param code: 股票代码
         :param token: 激活Token参考 http://www.fxyz.site/#apply
         :param method: 请求方法，默认get
@@ -78,7 +79,7 @@ class MarketApi:
         return data
 
     @staticmethod
-    def getBidData(code: str, token: str, method: str = "get") -> str:
+    def getBidData(code: str, token: str, method: str = "get") -> Any:
         """
         获取沪深A股实时竞价数据，竞价时间段：09:15-09:25
         
@@ -95,7 +96,7 @@ class MarketApi:
         return data
 
     @staticmethod
-    def getDealData(code: str, tradeDate: str, token: str, method: str = "get") -> str:
+    def getDealData(code: str, tradeDate: str, token: str, method: str = "get") -> Any:
         """
         获取沪深A股逐笔交易数据。
         
@@ -113,7 +114,7 @@ class MarketApi:
         return data
 
     @staticmethod
-    def getPriceData(code: str, tradeDate: str, token: str, method: str = "get") -> str:
+    def getPriceData(code: str, tradeDate: str, token: str, method: str = "get") -> Any:
         """
         获取沪深A股分价数据。
         
@@ -131,7 +132,7 @@ class MarketApi:
         return data
 
     @staticmethod
-    def getMoneyFlow(code: str, tradeDate: str, token: str, method: str = "get") -> str:
+    def getMoneyFlow(code: str, tradeDate: str, token: str, method: str = "get") -> Any:
         """
         获取沪深A股资金流向数据。
         资金流数据区分主买、主卖、特大单、大单、中单、小单等。
@@ -147,4 +148,22 @@ class MarketApi:
         result = DataUtil.request(url, method, params)
         data = json.loads(result)
         DataUtil.printLog("/wolf/money", params, data)
+        return data
+
+    @staticmethod
+    def getAdjustment(symbol: str, tradeDate: str, token: str,
+                      method: str = "get") -> Any:
+        """获取沪深京A股或ETF的复权变更数据。
+
+        :param symbol: 股票类型，stock-沪深京A股，etf-ETF基金
+        :param tradeDate: 交易日期
+        :param token: 登录网站获取的API Token
+        :param method: 请求方法，默认get
+        :return: JSON解码后的数据
+        """
+        url = Config.SERVER_URL + "/wolf/fq"
+        params = {"symbol": symbol, "tradeDate": tradeDate, "token": token}
+        result = DataUtil.request(url, method, params)
+        data = json.loads(result)
+        DataUtil.printLog("/wolf/fq", params, data)
         return data
